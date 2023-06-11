@@ -3,8 +3,10 @@ from firebase_admin import messaging
 from firebase_admin import credentials
 from firebase_admin import firestore
 from firebase_admin import storage
+from firebase_admin import db as rdb
 import datetime
 import cv2
+from . import settings as s     # this . avoids the module not found error
 
 # Use a service account.
 # path = "firebase-adminsdk-2idt6-de6f4a615e.json"
@@ -22,7 +24,7 @@ firebaseConfig = {
     "measurementId": "G-THZDV6150G"
 }
 # Initialize firebase
-app = firebase_admin.initialize_app(cred)
+app = firebase_admin.initialize_app(cred, firebaseConfig)
 # getting firestore reference
 db = firestore.client()
 # reference for the firebase cloud storage
@@ -114,6 +116,37 @@ def send_message(name, accuracy, image):
         trigger_notification(data)
         print("notification sent..")
     print(doc_ref.id)
+
+
+def my_listener(event):
+    # print(event.event_type)  # can be 'put' or 'patch'
+    # print(event.path)  # relative to the reference, it seems
+    # print(event.data)  # new data at /reference/event.path. None if deleted
+
+    if event.path == "/":
+        s.ALARM_MODE = event.data.get("alarm_mode")
+        s.STATUS = event.data.get("status")
+        s.set_high_priority_time(event.data.get("high_priority_time"))
+        s.set_low_priority_time(event.data.get("low_priority_time"))
+
+    elif event.path == "/status":
+        s.STATUS = event.data
+
+    elif event.path == "/alarm_mode":
+        s.ALARM_MODE = event.data
+
+    elif event.path == "/high_priority_time":
+        s.set_high_priority_time(event.data)
+
+    elif event.path == "/low_priority_time":
+        s.set_low_priority_time(event.data)
+
+
+listener = rdb.reference('settings').listen(my_listener)
+
+
+def stop_listener():
+    listener.close()
 
 # send_message(90, "test", None)
 
