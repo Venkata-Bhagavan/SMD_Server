@@ -39,7 +39,7 @@ MAXIMUM_FRAME_PERCENTAGE = h * w * MAXIMUM_FRAME_PERCENTAGE / 100
 while True:
     _, frame2 = cap.read()
     frame2 = imutils.resize(frame2, width=300)
-
+    cam = frame2
     if ALARM_MODE:
         img2 = util.image_preprocess(frame2)
         difference = cv2.absdiff(img1, img2)
@@ -47,8 +47,9 @@ while True:
 
         frame1 = frame2
         img1 = img2
-        cv2.imshow("threshold", difference)
-        cv2.waitKey(1)
+        cam = difference
+        # cv2.imshow("threshold", cam)
+        # cv2.waitKey(1)
 
         if threshold.sum() > MINIMUM_FRAME_PERCENTAGE:
 
@@ -58,11 +59,11 @@ while True:
             for contour in contours:
                 (x, y, h, w) = cv2.boundingRect(contour)
                 cropped_img = frame2[y:y + h, x:x + w]
-                cv2.imshow("img", cropped_img)
+                # cv2.imshow("img", cropped_img)
 
                 for i in od.detect_object(cropped_img):
                     name, accuracy = i[:2]
-                    # todo: find the difference between high priority and low priority
+                    # finding the difference between high priority and low priority
                     #  notification type and send the data to the methods which handle
                     #  the data insertion and triggering messages.
                     if name in HIGH_PRIORITY_OBJECTS and accuracy >= OBJECT_ACCURACY_PERCENTAGE or threshold.sum() > MAXIMUM_FRAME_PERCENTAGE:
@@ -78,21 +79,19 @@ while True:
                             name = 'unknown'
                         mt.send_low_alert(name, i[1], i[2])
     # time.sleep(0.5)
-
-cv2.waitKey(0)
+    cv2.imshow("threshold", cam)
+    key_pressed = cv2.waitKey(1)
+    if key_pressed == ord("t"):
+        ALARM_MODE = not ALARM_MODE
+        print("Toggle Alarm Mode...")
+    if key_pressed == ord("q"):
+        alarm_mode = False
+        print("####### Ending Process... #######")
+        break
 
 
 h, w = frame1.shape[:2]
 print(f" h = {h}, w = {w}")
 print(f'ratio 20% is {h * w * 20 / 100}')
 
-#
-#
-#
-# res = "../ObjectDetection/blur_frame2.png"
-# res = cv2.imread(res)
-# # cv2.imshow("read", res)
-# # cv2.waitKey(0)
-# l = od.detect_object(res)
-# for i in l:
-#     print(i[:2])
+

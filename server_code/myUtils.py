@@ -27,8 +27,3 @@ def image_preprocess(frame: numpy.ndarray) -> numpy.ndarray:
     img = cv2.GaussianBlur(img, (5, 5), 0.5)
     return img
 
-classNames = []
-classFile = 'res/coco.names'
-with open(classFile, 'rt') as f:
-    classNames = f.read().rstrip('\n').split('\n')
-print(classNames)

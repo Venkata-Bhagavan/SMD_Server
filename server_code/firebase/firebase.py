@@ -1,12 +1,10 @@
 import firebase_admin
+from firebase_admin import messaging
 from firebase_admin import credentials
 from firebase_admin import firestore
 from firebase_admin import storage
 import datetime
 import cv2
-
-import threading
-import time
 
 # Use a service account.
 # path = "firebase-adminsdk-2idt6-de6f4a615e.json"
@@ -31,12 +29,48 @@ db = firestore.client()
 bucket = storage.bucket("smartmotiondetection123.appspot.com")
 
 
-def image_url(name, image):
-    # client = storage.Client()
-    # bucket = client.get_bucket('smartmotiondetection123.appspot.com')
-    blob = bucket.blob('testfile.txt')
-    blob.upload_from_string('this is test content!')
-    return True
+def notification_test():
+    # need a name, accuracy, signed url.
+    # The topic name can be optionally prefixed with "/topics/".
+    topic = 'smd'
+    # See documentation on defining a message payload.
+    name = "unknown"
+    accuracy = 90
+    message = messaging.Message(
+        data={
+            "message": f"Found {'Unknown Object Movement' if name.lower() == 'unknown' else name + ' with ' + str(accuracy) + ' % accuracy'}.",
+            "image": "https://storage.googleapis.com/smartmotiondetection123.appspot.com/smd/%3Cgoogle.cloud.firestore_v1.document.DocumentReference%20object%20at%200x000001A59EAD30D0%3E?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=firebase-adminsdk-2idt6%40smartmotiondetection123.iam.gserviceaccount.com%2F20230608%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20230608T074824Z&X-Goog-Expires=604800&X-Goog-SignedHeaders=host&X-Goog-Signature=423ed6f89ed7703d0945aa690735c8310fa17d4684320c074fba1b71787accc880e8d4e8a8fb00f5d1f5189d5f96271560b75ed915cead88f884501a6366edf0b0206385acde44bf9c210a77e382ceb665ec3efbeb0fdf85d16f9be05c324399a18c7af9df1820e71e5330674dd9f955549f01edf9f74468affaf9dddddea9d2140979c20a1fe69dfb92b12f3a8029f62bfd72bec51899eeb498b1129efbaf7161250a7bca4921b01df17597035ff3987370a0160a3bed8354cf3bc40e8b64a78e8be713d8a8ae37a1e3fee2c5b8603353030a7d61cf90863180203254f09aed40b3423d70e9e8aac2d99ab116884bae68a28ef159e9b0a5450bef709cad398f"
+        },
+        topic=topic,
+    )
+    # Send a message to the devices subscribed to the provided topic.
+    response = messaging.send(message)
+    # Response is a message ID string.
+    print('Successfully sent message:', response)
+
+
+# notification_test()
+
+
+def trigger_notification(payload: dict):
+    # The topic name can be optionally prefixed with "/topics/".
+    topic = 'smd'
+
+    # See documentation on defining a message payload."
+    name = payload.get("name")
+    accuracy = payload.get("accuracy")
+    message = messaging.Message(
+        data={
+            "message": f"Found {'Unknown Object Movement' if name.lower() == 'unknown' else name + ' with ' + str(accuracy) + ' % accuracy'}.",
+            "image": payload.get("image"),
+        },
+        topic=topic,
+    )
+
+    # Send a message to the devices subscribed to the provided topic.
+    response = messaging.send(message)
+    # Response is a message ID string.
+    print('Successfully sent message:', response)
 
 
 def upload_image(mat_image, destination_path):
@@ -64,16 +98,22 @@ def send_message(name, accuracy, image):
     doc_ref = db.collection('smd').document()
 
     # doc_ref.id this will give the id of the document.
-    # todo: upload the image and get its path
-    if image_url(doc_ref.id, image):
-        doc_ref.set({
-            'name': name,
-            'accuracy': accuracy,
-            'image': upload_image(image,f'smd/{doc_ref}'),
-            'timestamp': firestore.SERVER_TIMESTAMP
-        })
-    print(doc_ref.id)
 
+    img_url = upload_image(image, f'smd/{doc_ref.id}')
+
+    if img_url is not None:
+        data = {
+            'name': name,
+            'accuracy': 0 if name.lower() == 'unknown' else accuracy,
+            'image': img_url,
+            'timestamp': firestore.SERVER_TIMESTAMP
+        }
+        # adding document to firestore.
+        doc_ref.set(data)
+        # triggering notification to devices with topic name "smd"
+        trigger_notification(data)
+        print("notification sent..")
+    print(doc_ref.id)
 
 # send_message(90, "test", None)
 
