@@ -7,7 +7,7 @@ import imutils
 import objectDetection as od
 import messageTrigger as mt
 import myUtils as util
-from firebase.firebase import stop_listener
+from firebase.firebase import stop_listener, update_status
 
 import firebase.settings as s
 # required Global variables
@@ -29,6 +29,7 @@ cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 _, frame1 = cap.read()
 
 print("Starting Application....\nOptions: \n 1. Press 't' for Toggle Alarm Mode. \n 2. Press 'q' for stop execution. ")
+update_status(1 if s.ALARM_MODE else 0)
 
 
 # Resizing the image
@@ -91,7 +92,8 @@ while True:
         s.ALARM_MODE = not s.ALARM_MODE
         print(f"-------> Toggle Alarm Mode... : {s.ALARM_MODE} <--------")
     if key_pressed == ord("q"):
-        alarm_mode = False
+        s.ALARM_MODE = False
+        update_status(-1)
         stop_listener()
         print("--------> Ending Process... <--------")
         break

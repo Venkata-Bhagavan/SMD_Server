@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="332f70ce-3c83-4c71-9863-ae8b94fbb6be" name="Changes" comment="Many changes.&#10;1. myUtils.py - removed unnecessary code that prints classnames of objectDetectionModel.&#10;2. objectDetection.py - commented code that will apply green box and text on image frame.&#10;3. main.py - added keys functionality for 't' and 'q' for toggle alarm mode and ending process. &#10;4. firebase.py - corrected image name while calling image_url(). changed the Notification triggering code. and more&#10;5. messageTrigger.py - cleared bug when calling send_message(). now messages will trigger without initial waiting time.">
-      <change afterPath="$PROJECT_DIR$/server_code/firebase/settings.py" afterDir="false" />
+    <list default="true" id="332f70ce-3c83-4c71-9863-ae8b94fbb6be" name="Changes" comment="added settings.py file used to store the values from the realtime database and listening to the value changes.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server_code/firebase/firebase.py" beforeDir="false" afterPath="$PROJECT_DIR$/server_code/firebase/firebase.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server_code/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/server_code/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server_code/messageTrigger.py" beforeDir="false" afterPath="$PROJECT_DIR$/server_code/messageTrigger.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,14 +30,14 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "C:/Users/venkat/PycharmProjects/Sem_4_Project",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/venkat/PycharmProjects/Sem_4_Project&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
-}]]></component>
+}</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration>C:\Users\venkat\AppData\Roaming\Subversion</configuration>
@@ -73,7 +71,14 @@
       <option name="project" value="LOCAL" />
       <updated>1686481038859</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="added settings.py file used to store the values from the realtime database and listening to the value changes.">
+      <created>1686505018301</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1686505018301</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -90,6 +95,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="initial commit" />
     <MESSAGE value="Many changes.&#10;1. myUtils.py - removed unnecessary code that prints classnames of objectDetectionModel.&#10;2. objectDetection.py - commented code that will apply green box and text on image frame.&#10;3. main.py - added keys functionality for 't' and 'q' for toggle alarm mode and ending process. &#10;4. firebase.py - corrected image name while calling image_url(). changed the Notification triggering code. and more&#10;5. messageTrigger.py - cleared bug when calling send_message(). now messages will trigger without initial waiting time." />
-    <option name="LAST_COMMIT_MESSAGE" value="Many changes.&#10;1. myUtils.py - removed unnecessary code that prints classnames of objectDetectionModel.&#10;2. objectDetection.py - commented code that will apply green box and text on image frame.&#10;3. main.py - added keys functionality for 't' and 'q' for toggle alarm mode and ending process. &#10;4. firebase.py - corrected image name while calling image_url(). changed the Notification triggering code. and more&#10;5. messageTrigger.py - cleared bug when calling send_message(). now messages will trigger without initial waiting time." />
+    <MESSAGE value="added settings.py file used to store the values from the realtime database and listening to the value changes." />
+    <option name="LAST_COMMIT_MESSAGE" value="added settings.py file used to store the values from the realtime database and listening to the value changes." />
   </component>
 </project>

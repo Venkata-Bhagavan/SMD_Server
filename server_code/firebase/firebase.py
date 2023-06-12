@@ -1,3 +1,5 @@
+import time
+
 import firebase_admin
 from firebase_admin import messaging
 from firebase_admin import credentials
@@ -6,7 +8,7 @@ from firebase_admin import storage
 from firebase_admin import db as rdb
 import datetime
 import cv2
-from . import settings as s     # this . avoids the module not found error
+from . import settings as s  # this . avoids the module not found error
 
 # Use a service account.
 # path = "firebase-adminsdk-2idt6-de6f4a615e.json"
@@ -118,22 +120,33 @@ def send_message(name, accuracy, image):
     print(doc_ref.id)
 
 
+def update_status(status: int):
+    s.STATUS = status
+    print(f"staus is {status}")
+    rdb.reference("settings").update({"status": status})
+
+
 def my_listener(event):
     # print(event.event_type)  # can be 'put' or 'patch'
     # print(event.path)  # relative to the reference, it seems
     # print(event.data)  # new data at /reference/event.path. None if deleted
 
     if event.path == "/":
-        s.ALARM_MODE = event.data.get("alarm_mode")
-        s.STATUS = event.data.get("status")
-        s.set_high_priority_time(event.data.get("high_priority_time"))
-        s.set_low_priority_time(event.data.get("low_priority_time"))
+        if len(event.data) == 1 and event.data.get("status") is not None:
+            s.STATUS = event.data.get("status")
+        else:
+            s.ALARM_MODE = event.data.get("alarm_mode")
+            # s.STATUS = event.data.get("status")
+            update_status(1 if s.ALARM_MODE else 0)
+            s.set_high_priority_time(event.data.get("high_priority_time"))
+            s.set_low_priority_time(event.data.get("low_priority_time"))
 
     elif event.path == "/status":
         s.STATUS = event.data
 
     elif event.path == "/alarm_mode":
         s.ALARM_MODE = event.data
+        # update_status(1 if s.ALARM_MODE else 0)
 
     elif event.path == "/high_priority_time":
         s.set_high_priority_time(event.data)
@@ -144,6 +157,8 @@ def my_listener(event):
 
 listener = rdb.reference('settings').listen(my_listener)
 
+time.sleep(5)
+update_status(-1)
 
 def stop_listener():
     listener.close()
